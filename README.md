@@ -1,6 +1,6 @@
 # IntroSkip Kodi Repository
 
-This repository is the **Kodi repository installer and package feed** for [IntroSkip](https://github.com/zoeywowy/service.introskip). The current feed contains **IntroSkip 0.0.24** and repository installer **1.0.4**.
+This repository is the **Kodi repository installer and package feed** for [IntroSkip](https://github.com/zoeywowy/service.introskip). The current feed contains **IntroSkip 0.0.25** and repository installer **1.0.4**.
 
 The actual add-on source code lives in a separate repository. Keeping the two projects separate makes the installer, package index and updates easier to maintain.
 
