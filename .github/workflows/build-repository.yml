@@ -33,7 +33,7 @@ jobs:
         with:
           persist-credentials: true
 
-      - name: Check out IntroSkip add-on source
+      # Rebuilds the feed from the current service source, including release 0.0.25.\n      - name: Check out IntroSkip add-on source
         uses: actions/checkout@v4
         with:
           repository: zoeywowy/service.introskip
