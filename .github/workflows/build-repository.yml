@@ -67,6 +67,15 @@ jobs:
               bad_file = archive.testzip()
               if bad_file:
                   raise SystemExit(f"Corrupt service ZIP member: {bad_file}")
+              names = archive.namelist()
+              if "service.introskip/addon.xml" not in names:
+                  raise SystemExit("The service ZIP has no top-level service.introskip/addon.xml.")
+              if "service.introskip/resources/lib/introdb.py" not in names:
+                  raise SystemExit("The service ZIP is missing the IntroDB runtime module.")
+              if any(name.startswith("service.introskip/repository/") for name in names):
+                  raise SystemExit("Repository feed files must not be bundled inside the service add-on.")
+              if any(name.startswith("service.introskip/tools/") for name in names):
+                  raise SystemExit("Repository build tools must not be bundled inside the service add-on.")
               archive.extractall("repo")
 
           service_manifest = ET.parse("repo/service.introskip/addon.xml").getroot()
