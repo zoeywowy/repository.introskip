@@ -9,7 +9,7 @@
 - Declares `datadir zip="true"` in the repository add-on manifest.
 - Bumped the installer above the legacy 1.0.3 version so existing installations can upgrade in place.
 - Automated builds validate both packages, regenerate the index and checksum, and deploy the GitHub Pages bootstrap page.
-- Included service version: IntroSkip **0.0.24**.
+- Included service version: IntroSkip **0.0.25**.
 
 ## 1.0.0–1.0.3 — Earlier combined-repository experiments
 
