@@ -184,7 +184,7 @@ jobs:
           <body>
             <h1>IntroSkip for Kodi 22</h1>
             <p>Install the IntroSkip repository add-on once. Kodi can then install and update IntroSkip through its normal add-on manager.</p>
-            <p><a class="download" href="{bootstrap.name}">Download IntroSkip Repository {repository_version}</a></p>
+            <p><a class="download" href="https://raw.githubusercontent.com/zoeywowy/repository.introskip/main/{bootstrap.name}">Download {bootstrap.name} (direct ZIP)</a></p>
             <h2>Install it in Kodi</h2>
             <ol>
               <li>Download the ZIP above in a normal web browser. Do not extract it.</li>
@@ -264,6 +264,6 @@ jobs:
                   raise SystemExit("The bootstrap ZIP is missing repository.introskip/addon.xml.")
           print("GitHub Pages bootstrap ZIP is reachable and valid.")
           PY
-          grep -q "Do not add this webpage as a Kodi File Manager source" /tmp/introskip-index.html
+          grep -q "raw.githubusercontent.com/zoeywowy/repository.introskip/main/" /tmp/introskip-index.html
           ! grep -q "Add this source in Kodi" /tmp/introskip-index.html
           echo "Raw GitHub index, checksum, Kodi-safe instructions and bootstrap ZIP are reachable."
