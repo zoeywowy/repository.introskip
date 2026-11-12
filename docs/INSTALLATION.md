@@ -6,7 +6,7 @@
 2. Enter `https://zoeywowy.github.io/repository.introskip/`.
 3. Give the source a short name, such as **IntroSkip Repository**.
 4. Open **Add-ons → Install from zip file**.
-5. Select the source you just added, then choose `repository.introskip-1.0.0.zip`.
+5. Select the source you just added, then choose `repository.introskip-1.0.4.zip`.
 6. Wait for Kodi to confirm that **IntroSkip Repository** was installed.
 7. Open **Add-ons → Install from repository → IntroSkip Repository → Services → IntroSkip** and install it.
 
