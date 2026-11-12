@@ -246,6 +246,24 @@ jobs:
             "https://zoeywowy.github.io/repository.introskip/" \
             -o /tmp/introskip-index.html
           grep -q "repository.introskip-" /tmp/introskip-index.html
+          BOOTSTRAP_NAME="$(grep -o 'repository.introskip-[0-9.]*\\.zip' index.html | head -n 1)"
+          test -n "$BOOTSTRAP_NAME"
+          curl -fLsS --retry 8 --retry-all-errors --retry-delay 3 \
+            "https://zoeywowy.github.io/repository.introskip/$BOOTSTRAP_NAME" \
+            -o "/tmp/$BOOTSTRAP_NAME"
+          python - <<'PY'
+          import glob
+          from zipfile import ZipFile
+          paths = glob.glob("/tmp/repository.introskip-*.zip")
+          if not paths:
+              raise SystemExit("The GitHub Pages bootstrap ZIP could not be downloaded.")
+          with ZipFile(paths[0]) as archive:
+              if archive.testzip():
+                  raise SystemExit("The GitHub Pages bootstrap ZIP is corrupt.")
+              if "repository.introskip/addon.xml" not in archive.namelist():
+                  raise SystemExit("The bootstrap ZIP is missing repository.introskip/addon.xml.")
+          print("GitHub Pages bootstrap ZIP is reachable and valid.")
+          PY
           grep -q "Do not add this webpage as a Kodi File Manager source" /tmp/introskip-index.html
           ! grep -q "Add this source in Kodi" /tmp/introskip-index.html
-          echo "Raw GitHub index, checksum and Kodi-safe installer instructions are reachable."
+          echo "Raw GitHub index, checksum, Kodi-safe instructions and bootstrap ZIP are reachable."
