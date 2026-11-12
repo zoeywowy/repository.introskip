@@ -26,7 +26,7 @@ The service folder is downloaded from `zoeywowy/service.introskip` during the wo
 1. Open **Actions → Build Kodi repository**.
 2. Select **Run workflow** to package the latest service source.
 3. The workflow runs the upstream-style repository generator, checks the XML, checksum and ZIP contents, commits generated packages, and deploys the installer page.
-4. Check the workflow's final public URL tests before installing the update in Kodi.
+4. Check the workflow's final public URL tests before installing the update in Kodi. The GitHub Pages URL is a human-facing download page, not a Kodi File Manager source. Users download the bootstrap ZIP in a browser and install it from local storage or a network share.
 
 A daily scheduled run also checks the add-on source for a newer manifest version. For a new service release, bump the version in the service repository's `addon.xml` before running the workflow.
 
