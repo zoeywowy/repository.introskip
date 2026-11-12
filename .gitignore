@@ -1,0 +1,11 @@
+# Local build and checkout artifacts
+service-source/
+site/
+__pycache__/
+*.py[cod]
+.DS_Store
+Thumbs.db
+
+# Generated service source is fetched by Actions; generated Kodi packages stay tracked.
+repo/service.introskip/
+repo/repository.introskip/icon.png

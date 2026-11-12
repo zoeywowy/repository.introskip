@@ -1,0 +1,224 @@
+name: Build Kodi repository
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 6 * * *"
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/build-repository.yml"
+      - "_repo_generator.py"
+      - "repo/repository.introskip/addon.xml"
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: introskip-kodi-pages
+  cancel-in-progress: true
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Check out IntroSkip add-on source
+        uses: actions/checkout@v4
+        with:
+          repository: zoeywowy/service.introskip
+          ref: main
+          path: service-source
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Build the IntroSkip add-on ZIP
+        run: python service-source/build_zip.py
+
+      - name: Prepare add-on folders for the repository generator
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          import shutil
+          import xml.etree.ElementTree as ET
+
+          source = Path("service-source")
+          packages = sorted((source / "dist").glob("service.introskip-*.zip"))
+          if not packages:
+              raise SystemExit("The service build did not produce an installable ZIP.")
+
+          package = packages[-1]
+          with ZipFile(package) as archive:
+              bad_file = archive.testzip()
+              if bad_file:
+                  raise SystemExit(f"Corrupt service ZIP member: {bad_file}")
+              archive.extractall("repo")
+
+          service_manifest = ET.parse("repo/service.introskip/addon.xml").getroot()
+          if service_manifest.get("id") != "service.introskip":
+              raise SystemExit("Unexpected add-on ID in the service package.")
+
+          repository_art = Path("repo/repository.introskip")
+          repository_art.mkdir(parents=True, exist_ok=True)
+          shutil.copy2(source / "icon.png", repository_art / "icon.png")
+          print(f"Prepared IntroSkip {service_manifest.get('version')}")
+          PY
+
+      - name: Generate Kodi index, checksums and versioned packages
+        run: python _repo_generator.py
+
+      - name: Validate repository metadata and package layout
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          import hashlib
+          import shutil
+          import xml.etree.ElementTree as ET
+
+          root = Path("repo")
+          packages = root / "zips"
+          index_path = packages / "addons.xml"
+          checksum_path = packages / "addons.xml.md5"
+          index_bytes = index_path.read_bytes()
+          index = ET.fromstring(index_bytes)
+
+          found = {item.get("id") for item in index.findall("addon")}
+          expected = {"repository.introskip", "service.introskip"}
+          if found != expected:
+              raise SystemExit(f"Unexpected add-on index entries: {found}")
+
+          expected_md5 = hashlib.md5(index_bytes).hexdigest()
+          actual_md5 = checksum_path.read_text(encoding="ascii").strip()
+          if actual_md5 != expected_md5:
+              raise SystemExit("addons.xml.md5 does not match addons.xml")
+
+          repository = ET.parse(root / "repository.introskip" / "addon.xml").getroot()
+          directory = repository.find("./extension[@point='xbmc.addon.repository']/dir")
+          raw = "https://raw.githubusercontent.com/zoeywowy/repository.introskip/main/repo/zips/"
+          if directory is None:
+              raise SystemExit("Repository add-on is missing its repository directory.")
+          if directory.findtext("info") != raw + "addons.xml":
+              raise SystemExit("The info URL is incorrect.")
+          if directory.find("info").get("compressed") != "false":
+              raise SystemExit("The info URL must declare compressed=false.")
+          if directory.findtext("checksum") != raw + "addons.xml.md5":
+              raise SystemExit("The checksum URL is incorrect.")
+          if directory.findtext("datadir") != raw or directory.find("datadir").get("zip") != "true":
+              raise SystemExit("The datadir URL must use the standard zip=true layout.")
+
+          for addon_id in sorted(expected):
+              manifest_path = root / addon_id / "addon.xml"
+              manifest = ET.parse(manifest_path).getroot()
+              version = manifest.get("version")
+              package_path = packages / addon_id / f"{addon_id}-{version}.zip"
+              if not package_path.is_file():
+                  raise SystemExit(f"Missing package: {package_path}")
+              if not (packages / addon_id / "addon.xml").is_file():
+                  raise SystemExit(f"Missing copied metadata for {addon_id}")
+              with ZipFile(package_path) as archive:
+                  bad_file = archive.testzip()
+                  if bad_file:
+                      raise SystemExit(f"Corrupt ZIP member in {package_path}: {bad_file}")
+                  member = f"{addon_id}/addon.xml"
+                  if member not in archive.namelist():
+                      raise SystemExit(f"{package_path} does not contain {member}")
+                  packaged = ET.fromstring(archive.read(member))
+                  if packaged.get("id") != addon_id or packaged.get("version") != version:
+                      raise SystemExit(f"Manifest mismatch in {package_path}")
+
+          repository_version = repository.get("version")
+          bootstrap = Path(f"repository.introskip-{repository_version}.zip")
+          shutil.copy2(packages / "repository.introskip" / bootstrap.name, bootstrap)
+
+          page = f"""<!doctype html>
+          <html lang="en">
+          <head>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <title>IntroSkip Kodi Repository</title>
+            <style>
+              body {{ font: 16px/1.6 system-ui, sans-serif; max-width: 720px; margin: 4rem auto; padding: 0 1.25rem; color: #20242a; }}
+              h1 {{ line-height: 1.2; }}
+              a {{ color: #1769aa; }}
+              code {{ background: #f1f3f5; padding: .15rem .35rem; border-radius: 4px; }}
+              .download {{ display: inline-block; background: #1769aa; color: white; text-decoration: none; padding: .7rem 1rem; border-radius: 6px; }}
+            </style>
+          </head>
+          <body>
+            <h1>IntroSkip for Kodi 22</h1>
+            <p>Install the IntroSkip repository add-on once. Kodi can then install and update IntroSkip through its normal add-on manager.</p>
+            <p><a class="download" href="{bootstrap.name}">Download IntroSkip Repository {repository_version}</a></p>
+            <h2>Add this source in Kodi</h2>
+            <p>Open <strong>Settings → File manager → Add source</strong> and enter:</p>
+            <p><code>https://zoeywowy.github.io/repository.introskip/</code></p>
+            <p>Then choose <strong>Add-ons → Install from zip file</strong> and select the repository ZIP.</p>
+            <p><a href="https://github.com/zoeywowy/service.introskip">IntroSkip add-on</a> · <a href="https://github.com/zoeywowy/repository.introskip">Repository source</a></p>
+          </body>
+          </html>
+          """
+          Path("index.html").write_text(page, encoding="utf-8")
+          print(f"Validated Kodi packages and prepared {bootstrap.name}")
+          PY
+
+      - name: Commit generated Kodi packages
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add repo/zips index.html repository.introskip-*.zip
+          if ! git diff --cached --quiet; then
+            git commit -m "build: publish IntroSkip Kodi packages"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          else
+            echo "No package changes to publish."
+          fi
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Prepare Pages site
+        run: |
+          mkdir -p site
+          cp index.html site/index.html
+          cp repository.introskip-*.zip site/
+          touch site/.nojekyll
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: site
+
+      - name: Deploy GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: Verify public Kodi repository files
+        run: |
+          curl -fLsS --retry 8 --retry-all-errors --retry-delay 3 \
+            "https://raw.githubusercontent.com/zoeywowy/repository.introskip/main/repo/zips/addons.xml" \
+            -o /tmp/addons.xml
+          curl -fLsS --retry 8 --retry-all-errors --retry-delay 3 \
+            "https://raw.githubusercontent.com/zoeywowy/repository.introskip/main/repo/zips/addons.xml.md5" \
+            -o /tmp/addons.xml.md5
+          test "$(cat /tmp/addons.xml.md5)" = "$(md5sum /tmp/addons.xml | cut -d ' ' -f 1)"
+          curl -fLsS --retry 8 --retry-all-errors --retry-delay 3 \
+            "https://zoeywowy.github.io/repository.introskip/" \
+            -o /tmp/introskip-index.html
+          grep -q "repository.introskip-" /tmp/introskip-index.html
+          echo "Raw GitHub index, checksum and GitHub Pages installer are reachable."
