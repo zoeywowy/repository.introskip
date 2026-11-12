@@ -89,7 +89,9 @@ jobs:
           PY
 
       - name: Clear previous generated packages
-        run: rm -rf repo/zips
+        run: |
+          rm -rf repo/zips
+          rm -f repository.introskip-*.zip
 
       - name: Generate Kodi index, checksums and versioned packages
         run: python _repo_generator.py
