@@ -1,23 +1,23 @@
 # IntroSkip Kodi Repository
 
-This repository is the **Kodi repository installer and package feed** for [IntroSkip](https://github.com/zoeywowy/service.introskip). The first published feed contains **IntroSkip 0.0.24** and repository installer **1.0.4**.
+This repository is the **Kodi repository installer and package feed** for [IntroSkip](https://github.com/zoeywowy/service.introskip). The current feed contains **IntroSkip 0.0.24** and repository installer **1.0.4**.
 
 The actual add-on source code lives in a separate repository. Keeping the two projects separate makes the installer, package index and updates easier to maintain.
 
 ## Install in Kodi 22
 
-1. Open **Settings → File manager → Add source**.
-2. Enter this address:
+**Important:** The GitHub Pages URL is a download webpage, not a browseable directory. Do not add it as a Kodi File Manager source.
 
-   `https://zoeywowy.github.io/repository.introskip/`
+1. Open the [IntroSkip download page](https://zoeywowy.github.io/repository.introskip/) in a normal web browser.
+2. Download `repository.introskip-1.0.4.zip`. Do not extract it.
+3. Make the ZIP available to Kodi. On Windows, leave it in Downloads. On Android/Fire TV, download it on the device or copy it over USB or a shared network folder.
+4. In Kodi, open **Add-ons → Install from zip file**.
+5. Browse to the downloaded ZIP and select it.
+6. Open **Add-ons → Install from repository → IntroSkip Repository → Services → IntroSkip** and select **Install**.
 
-3. Name the source **IntroSkip Repository**.
-4. Open **Add-ons → Install from zip file → IntroSkip Repository**.
-5. Select `repository.introskip-1.0.4.zip`.
-6. Open **Add-ons → Install from repository → IntroSkip Repository → Services → IntroSkip**.
-7. Select **Install**.
+If Kodi's ZIP browser shows only `..` and `0 items`, cancel it. You have opened the HTML download page instead of a folder containing the ZIP.
 
-If Kodi does not show the repository immediately after installation, wait for its refresh or restart Kodi.
+See the [complete installation and troubleshooting guide](docs/INSTALLATION.md).
 
 ## How the repository works
 
@@ -28,7 +28,7 @@ This project follows the established GitHub-hosted Kodi layout demonstrated by [
 - `repo/zips/addons.xml` is the generated Kodi add-on index.
 - `repo/zips/addons.xml.md5` is the matching MD5 checksum.
 - `repo/zips/<addon-id>/<addon-id>-<version>.zip` contains each installable add-on.
-- `repository.introskip-1.0.4.zip` in the repository root is the first-install ZIP served by GitHub Pages.
+- `repository.introskip-1.0.4.zip` is the first-install bootstrap ZIP linked from the GitHub Pages download page.
 
 The repository add-on points Kodi directly to the raw GitHub index and package directory. Its `datadir` uses `zip="true"`, as in the reference layout.
 
@@ -38,24 +38,21 @@ The **Build Kodi repository** workflow checks out the current `main` branch of `
 
 - Run it manually from **Actions → Build Kodi repository → Run workflow**.
 - A daily scheduled run also checks for a newer add-on version.
-- The workflow only commits generated packages when they change.
+- The workflow only commits generated package files when they change.
 
 When releasing a new add-on version, update the version in the add-on's own `addon.xml`. The repository generator uses that version to create the package path Kodi expects.
 
 ## GitHub Pages setup
 
-Open **Settings → Pages** and set **Build and deployment → Source** to **GitHub Actions**. The workflow publishes the installer page and bootstrap ZIP. Kodi's package index and add-on ZIPs are served from `raw.githubusercontent.com`.
+Open **Settings → Pages** and set **Build and deployment → Source** to **GitHub Actions**. The workflow publishes the human-facing download page and bootstrap ZIP. Kodi's package index and add-on ZIPs are served from `raw.githubusercontent.com`.
 
 ## Troubleshooting
 
-- The File Manager source must be exactly `https://zoeywowy.github.io/repository.introskip/`.
-- Do not use the old `service.introskip` Pages address.
+- Do not add `https://zoeywowy.github.io/repository.introskip/` as a Kodi File Manager source. It is a webpage, not a directory listing.
+- If the ZIP browser is empty, download the ZIP in a normal browser and install it from local storage or a network share.
 - Confirm the latest workflow run completed successfully in [GitHub Actions](https://github.com/zoeywowy/repository.introskip/actions).
-- Check that these files open in a browser:
-  - [Kodi add-on index](https://raw.githubusercontent.com/zoeywowy/repository.introskip/main/repo/zips/addons.xml)
-  - [Matching MD5 checksum](https://raw.githubusercontent.com/zoeywowy/repository.introskip/main/repo/zips/addons.xml.md5)
-
-If Kodi still reports a connection error, capture a fresh Kodi log and share it with the exact time of the failed repository refresh.
+- Check that the [Kodi add-on index](https://raw.githubusercontent.com/zoeywowy/repository.introskip/main/repo/zips/addons.xml) and [matching MD5 checksum](https://raw.githubusercontent.com/zoeywowy/repository.introskip/main/repo/zips/addons.xml.md5) open in a browser.
+- If Kodi still reports a connection error after the repository add-on is installed, capture a fresh Kodi log immediately after the failed refresh.
 
 ## Related projects
 
