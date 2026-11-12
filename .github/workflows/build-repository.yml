@@ -246,7 +246,7 @@ jobs:
             "https://zoeywowy.github.io/repository.introskip/" \
             -o /tmp/introskip-index.html
           grep -q "repository.introskip-" /tmp/introskip-index.html
-          BOOTSTRAP_NAME="$(grep -o 'repository.introskip-[0-9.]*\\.zip' index.html | head -n 1)"
+          BOOTSTRAP_NAME="$(grep -o 'repository.introskip-[0-9.]*\.zip' index.html | head -n 1)"
           test -n "$BOOTSTRAP_NAME"
           curl -fLsS --retry 8 --retry-all-errors --retry-delay 3 \
             "https://zoeywowy.github.io/repository.introskip/$BOOTSTRAP_NAME" \
