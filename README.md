@@ -1,6 +1,6 @@
 # IntroSkip Kodi Repository
 
-This repository is the **Kodi repository installer and package feed** for [IntroSkip](https://github.com/zoeywowy/service.introskip). The first published feed contains **IntroSkip 0.0.24** and repository installer **1.0.0**.
+This repository is the **Kodi repository installer and package feed** for [IntroSkip](https://github.com/zoeywowy/service.introskip). The first published feed contains **IntroSkip 0.0.24** and repository installer **1.0.4**.
 
 The actual add-on source code lives in a separate repository. Keeping the two projects separate makes the installer, package index and updates easier to maintain.
 
@@ -13,7 +13,7 @@ The actual add-on source code lives in a separate repository. Keeping the two pr
 
 3. Name the source **IntroSkip Repository**.
 4. Open **Add-ons → Install from zip file → IntroSkip Repository**.
-5. Select `repository.introskip-1.0.0.zip`.
+5. Select `repository.introskip-1.0.4.zip`.
 6. Open **Add-ons → Install from repository → IntroSkip Repository → Services → IntroSkip**.
 7. Select **Install**.
 
@@ -28,7 +28,7 @@ This project follows the established GitHub-hosted Kodi layout demonstrated by [
 - `repo/zips/addons.xml` is the generated Kodi add-on index.
 - `repo/zips/addons.xml.md5` is the matching MD5 checksum.
 - `repo/zips/<addon-id>/<addon-id>-<version>.zip` contains each installable add-on.
-- `repository.introskip-1.0.0.zip` in the repository root is the first-install ZIP served by GitHub Pages.
+- `repository.introskip-1.0.4.zip` in the repository root is the first-install ZIP served by GitHub Pages.
 
 The repository add-on points Kodi directly to the raw GitHub index and package directory. Its `datadir` uses `zip="true"`, as in the reference layout.
 
