@@ -1,6 +1,6 @@
 # Install the IntroSkip Kodi repository
 
-The GitHub Pages address is a **download page**, not a browseable ZIP directory. Do not add the Pages address as a Kodi File Manager source. Kodi does not display the download button from that HTML page inside its ZIP browser.
+The GitHub Pages address is an information page, not a ZIP directory. Kodi’s **Install from zip file** browser cannot open a webpage or click its download button. Download the bootstrap ZIP directly in a normal browser first.
 
 ## One-time installation
 
@@ -11,7 +11,7 @@ The GitHub Pages address is a **download page**, not a browseable ZIP directory.
    - **Android / Fire TV:** download it on the device if a browser is available, or copy it from a computer using USB or a shared network folder.
    - **Other devices:** use a local folder, USB drive or network share Kodi can browse.
 4. In Kodi, open **Add-ons → Install from zip file**.
-5. Browse to the downloaded ZIP and select `repository.introskip-1.0.4.zip`.
+5. Browse to the downloaded ZIP and select `repository.introskip-1.0.5.zip`.
 6. Wait for Kodi to confirm **IntroSkip Repository** was installed.
 7. Open **Add-ons → Install from repository → IntroSkip Repository → Services → IntroSkip** and select **Install**.
 
@@ -23,10 +23,10 @@ After the repository is installed, Kodi can check its feed for newer versions. Y
 
 ## If Kodi shows an empty folder
 
-If the Install from zip file browser shows only `..` and `0 items`, you are browsing the GitHub Pages website address. That page is HTML, not a directory listing.
+If the Install from zip file browser shows only `..` and `0 items`, Kodi is looking at a location that contains no downloadable ZIP file.
 
 1. Cancel the empty browser.
-2. Download the repository ZIP using a normal browser.
+2. Download the ZIP using the direct link in this guide.
 3. Open Install from zip file again and select the ZIP from Downloads, USB or a network share.
 
 ## If Kodi cannot connect after installation
