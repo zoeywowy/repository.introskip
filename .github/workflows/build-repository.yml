@@ -200,7 +200,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add repo/zips index.html repository.introskip-*.zip
+          git add -A -- repo/zips index.html 'repository.introskip-*.zip'
           if ! git diff --cached --quiet; then
             git commit -m "build: publish IntroSkip Kodi packages"
             git push origin HEAD:main
