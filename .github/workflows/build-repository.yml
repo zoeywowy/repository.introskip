@@ -88,6 +88,9 @@ jobs:
           print(f"Prepared IntroSkip {service_manifest.get('version')}")
           PY
 
+      - name: Clear previous generated packages
+        run: rm -rf repo/zips
+
       - name: Generate Kodi index, checksums and versioned packages
         run: python _repo_generator.py
 
@@ -150,6 +153,12 @@ jobs:
                   packaged = ET.fromstring(archive.read(member))
                   if packaged.get("id") != addon_id or packaged.get("version") != version:
                       raise SystemExit(f"Manifest mismatch in {package_path}")
+                  if addon_id == "service.introskip":
+                      names = archive.namelist()
+                      if any(name.startswith("service.introskip/repository/") for name in names):
+                          raise SystemExit("The published service ZIP contains old repository files.")
+                      if any(name.startswith("service.introskip/tools/") for name in names):
+                          raise SystemExit("The published service ZIP contains repository build tools.")
 
           repository_version = repository.get("version")
           bootstrap = Path(f"repository.introskip-{repository_version}.zip")
