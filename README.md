@@ -1,6 +1,6 @@
 # IntroSkip Kodi Repository
 
-This repository is the **Kodi repository installer and package feed** for [IntroSkip](https://github.com/zoeywowy/service.introskip). The current feed contains **IntroSkip 0.0.25** and repository installer **1.0.4**.
+This repository is the **Kodi repository installer and package feed** for [IntroSkip](https://github.com/zoeywowy/service.introskip). The current feed contains **IntroSkip 0.0.25** and repository installer **1.0.5**.
 
 The actual add-on source code lives in a separate repository. Keeping the two projects separate makes the installer, package index and updates easier to maintain.
 
@@ -9,13 +9,13 @@ The actual add-on source code lives in a separate repository. Keeping the two pr
 **Important:** The GitHub Pages URL is a download webpage, not a browseable directory. Do not add it as a Kodi File Manager source.
 
 1. Open the [IntroSkip download page](https://zoeywowy.github.io/repository.introskip/) in a normal web browser.
-2. Download `repository.introskip-1.0.4.zip`. Do not extract it.
+2. Download the [direct ZIP file](https://raw.githubusercontent.com/zoeywowy/repository.introskip/main/repository.introskip-1.0.5.zip). Do not extract it.
 3. Make the ZIP available to Kodi. On Windows, leave it in Downloads. On Android/Fire TV, download it on the device or copy it over USB or a shared network folder.
 4. In Kodi, open **Add-ons → Install from zip file**.
 5. Browse to the downloaded ZIP and select it.
 6. Open **Add-ons → Install from repository → IntroSkip Repository → Services → IntroSkip** and select **Install**.
 
-If Kodi's ZIP browser shows only `..` and `0 items`, cancel it. You have opened the HTML download page instead of a folder containing the ZIP.
+Kodi’s **Install from zip file** browser only lists files in locations Kodi can browse. It cannot open an HTML download page or click a webpage button. Download the direct ZIP in a normal browser first, then select that local ZIP in Kodi.
 
 See the [complete installation and troubleshooting guide](docs/INSTALLATION.md).
 
@@ -28,7 +28,7 @@ This project follows the established GitHub-hosted Kodi layout demonstrated by [
 - `repo/zips/addons.xml` is the generated Kodi add-on index.
 - `repo/zips/addons.xml.md5` is the matching MD5 checksum.
 - `repo/zips/<addon-id>/<addon-id>-<version>.zip` contains each installable add-on.
-- `repository.introskip-1.0.4.zip` is the first-install bootstrap ZIP linked from the GitHub Pages download page.
+- `repository.introskip-1.0.5.zip` is the first-install bootstrap ZIP, served directly from raw GitHub.
 
 The repository add-on points Kodi directly to the raw GitHub index and package directory. Its `datadir` uses `zip="true"`, as in the reference layout.
 
