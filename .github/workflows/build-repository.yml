@@ -293,7 +293,7 @@ jobs:
           deployed_page = Path("/tmp/introskip-index.html").read_text(encoding="utf-8")
           # Use Kodi 22 CHTTPDirectory's actual anchor pattern: href must be first.
           pattern = re.compile(
-              r'<a href="([^"]*)"[^>]*>\\s*(.*?)\\s*</a>(.+?)(?=<a|</tr|$)',
+              r'<a href="([^"]*)"[^>]*>\s*(.*?)\s*</a>(.+?)(?=<a|</tr|$)',
               re.IGNORECASE | re.DOTALL,
           )
           visible = []
