@@ -275,7 +275,11 @@ jobs:
             -o "/tmp/$BOOTSTRAP_NAME"
           python - <<'PY'
           import glob
+          import html
+          import re
+          from pathlib import Path
           from zipfile import ZipFile
+
           paths = glob.glob("/tmp/repository.introskip-*.zip")
           if not paths:
               raise SystemExit("The GitHub Pages bootstrap ZIP could not be downloaded.")
@@ -284,7 +288,26 @@ jobs:
                   raise SystemExit("The GitHub Pages bootstrap ZIP is corrupt.")
               if "repository.introskip/addon.xml" not in archive.namelist():
                   raise SystemExit("The bootstrap ZIP is missing repository.introskip/addon.xml.")
-          print("GitHub Pages bootstrap ZIP is reachable and valid.")
+
+          bootstrap_name = Path(paths[0]).name
+          deployed_page = Path("/tmp/introskip-index.html").read_text(encoding="utf-8")
+          # Use Kodi 22 CHTTPDirectory's actual anchor pattern: href must be first.
+          pattern = re.compile(
+              r'<a href="([^"]*)"[^>]*>\\s*(.*?)\\s*</a>(.+?)(?=<a|</tr|$)',
+              re.IGNORECASE | re.DOTALL,
+          )
+          visible = []
+          for match in pattern.finditer(deployed_page):
+              href = html.unescape(match.group(1)).strip().rstrip("/")
+              label = html.unescape(re.sub(r"<[^>]+>", "", match.group(2))).strip().rstrip("/")
+              if href and label == href:
+                  visible.append(href)
+          if bootstrap_name not in visible:
+              raise SystemExit(
+                  f"Deployed HTML is not Kodi-browseable. "
+                  f"Expected {bootstrap_name}; Kodi-style parser found {visible}"
+              )
+          print(f"GitHub Pages bootstrap ZIP is valid and Kodi-visible: {bootstrap_name}")
           PY
           grep -q "href=\"$BOOTSTRAP_NAME\"" /tmp/introskip-index.html
           ! grep -q "Add this source in Kodi" /tmp/introskip-index.html
