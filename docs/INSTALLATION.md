@@ -1,41 +1,33 @@
 # Install IntroSkip on Kodi 22
 
-The intended installation uses Kodi's File Manager source. You do not need to download the ZIP in a separate browser, move it to Kodi, or browse local storage.
+The repository is a one-time installation. After it is installed, Kodi can install and update IntroSkip normally.
 
-## One-time repository installation
+## First installation
 
-1. In Kodi, open **Settings → File manager → Add source**.
+1. Open **Settings → File manager → Add source**.
 2. Enter `https://zoeywowy.github.io/repository.introskip/`.
-3. Name the source **IntroSkip Repository** and save it.
+3. Name the source **IntroSkip Repository**.
 4. Open **Add-ons → Install from zip file**.
-5. Select the **IntroSkip Repository** source. Kodi should list `repository.introskip-1.0.5.zip`.
-6. Select that ZIP and wait for Kodi to confirm that **IntroSkip Repository** is installed.
+5. Select **IntroSkip Repository**. Kodi should list the current `repository.introskip-<version>.zip`.
+6. Select the ZIP and wait for Kodi to confirm that the repository add-on is installed.
 7. Open **Add-ons → Install from repository → IntroSkip Repository → Services → IntroSkip** and select **Install**.
 
-The bootstrap ZIP is linked with a relative filename from the GitHub Pages root. Kodi 22's HTTP directory parser expects the anchor to start with `<a href="...">` and the visible link text to match that filename exactly. Putting a class before `href` makes Kodi miss the link even though the page looks correct in a browser. IntroSkip's build now tests the generated and deployed HTML against that parser pattern. This follows the [repository.example template](https://github.com/drinfernoo/repository.example) and Kodi's [HTTPDirectory implementation](https://github.com/xbmc/xbmc/blob/Piers/xbmc/filesystem/HTTPDirectory.cpp).
+No browser download, manual ZIP transfer or extraction is required.
 
-## Updating
+## Updates
 
-After the repository add-on is installed, Kodi reads the feed's `addons.xml` and matching checksum, then downloads service packages from the configured ZIP data directory. Future IntroSkip releases are installed through Kodi's normal repository update mechanism. The bootstrap ZIP is only needed for the initial repository installation or if the repository add-on itself must be reinstalled.
+Once installed, Kodi reads the repository's add-on index and checksum, then retrieves service packages from the configured ZIP directory. IntroSkip updates are delivered through Kodi's normal add-on manager.
+
+The bootstrap ZIP is only needed for the initial repository installation or if the repository add-on itself must be reinstalled.
 
 ## If Kodi shows an empty source
 
-If selecting **IntroSkip Repository** under **Install from zip file** shows only `..` and **0 items**, Kodi is not recognizing the ZIP link in the HTML returned by the source.
+If the source shows only `..` and **0 items**:
 
-- Confirm the GitHub Actions **Build Kodi repository** workflow succeeded: [Actions](https://github.com/zoeywowy/repository.introskip/actions).
-- Confirm the Pages site has deployed the latest commit: [Deployments](https://github.com/zoeywowy/repository.introskip/deployments).
-- Remove and re-add the File Manager source to clear a stale source entry.
-- Restart Kodi and try again.
+1. Confirm the [Build Kodi repository workflow](https://github.com/zoeywowy/repository.introskip/actions) completed successfully.
+2. Remove and re-add the File Manager source to refresh a stale entry.
+3. Restart Kodi and try again.
 
-If it remains empty, capture a fresh `kodi.log` after opening the source. The relevant lines will show whether Kodi received the HTML page and whether it parsed the relative ZIP link.
+Kodi 22 reads the bootstrap ZIP from a relative HTML link. The link must begin with `<a href="...">`, and its visible text must match the ZIP filename. The automated build checks both the generated page and the deployed public page.
 
-## Repository feed troubleshooting
-
-After the bootstrap repository add-on is installed, Kodi uses:
-
-- [Kodi add-on index](https://raw.githubusercontent.com/zoeywowy/repository.introskip/main/repo/zips/addons.xml)
-- [Matching checksum](https://raw.githubusercontent.com/zoeywowy/repository.introskip/main/repo/zips/addons.xml.md5)
-- [ZIP package directory](https://github.com/zoeywowy/repository.introskip/tree/main/repo/zips)
-
-The repository add-on declares the index, checksum, and `datadir zip="true"` using the standard Kodi layout. If the repository cannot connect after installation, check these endpoints and provide a fresh Kodi log.
-
+If the source is still empty, capture a fresh Kodi log after opening it and report the result in an [issue](https://github.com/zoeywowy/service.introskip/issues/new). Do not switch to a manual download unless you intentionally want to bypass repository-based updates.
