@@ -4,7 +4,7 @@ The official third-party Kodi repository feed for [IntroSkip](https://github.com
 
 ## Install on Kodi 22
 
-**No browser download or file transfer is required.** Add the repository website as a Kodi File Manager source. The website exposes the bootstrap ZIP as a relative file link, following the same approach used by the [A4K repository](https://github.com/a4k-openproject/a4k-openproject.github.io).
+**No browser download or file transfer is required.** Add the repository website as a Kodi File Manager source. The website exposes the bootstrap ZIP as a relative file link, following the same approach used by the [A4K repository](https://github.com/a4k-openproject/a4k-openproject.github.io). Kodi 22 requires the anchor to begin with `<a href="...">` and the link text to match the filename; the build tests this with Kodi's HTTP directory parsing pattern.
 
 1. In Kodi, open **Settings → File manager → Add source**.
 2. Enter this exact address: `https://zoeywowy.github.io/repository.introskip/`
