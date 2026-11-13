@@ -205,7 +205,7 @@ jobs:
 
           # Mirror Kodi 22 CHTTPDirectory's HTML anchor recognition.
           kodi_anchor = re.compile(
-              r'<a href="([^"]*)"[^>]*>\\s*(.*?)\\s*</a>(.+?)(?=<a|</tr|$)',
+              r'<a href="([^"]*)"[^>]*>\s*(.*?)\s*</a>(.+?)(?=<a|</tr|$)',
               re.IGNORECASE | re.DOTALL,
           )
           visible_items = []
