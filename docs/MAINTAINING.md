@@ -26,7 +26,7 @@ The service folder is downloaded from `zoeywowy/service.introskip` during the wo
 1. Open **Actions → Build Kodi repository**.
 2. Select **Run workflow** to package the latest service source.
 3. The workflow runs the upstream-style repository generator, checks the XML, checksum and ZIP contents, commits generated packages, and deploys the installer page.
-4. Check the workflow's final public URL tests before installing the update in Kodi. The GitHub Pages URL is a human-facing download page, not a Kodi File Manager source. Users download the bootstrap ZIP in a browser and install it from local storage or a network share.
+4. Check the workflow's final public URL tests before asking users to refresh Kodi. The GitHub Pages root is also the Kodi File Manager source; it must expose the bootstrap ZIP as a parseable HTML link.
 
 A daily scheduled run also checks the add-on source for a newer manifest version. For a new service release, bump the version in the service repository's `addon.xml` before running the workflow.
 
@@ -39,7 +39,18 @@ The repository add-on manifest uses the standard pattern:
 - `datadir zip="true"` points to the directory containing the per-add-on ZIP folders.
 - Each package is stored at `<addon-id>/<addon-id>-<version>.zip`.
 
-Do not replace these URLs with GitHub Pages URLs. The Pages site is only the human-facing bootstrap download page; the Kodi index and packages use raw GitHub URLs.
+Do not replace these URLs with GitHub Pages URLs. The Pages site exposes the bootstrap ZIP to Kodi's HTTP directory browser. The Kodi index and service packages use raw GitHub URLs.
+
+## Kodi HTTP directory parsing
+
+Kodi 22's `CHTTPDirectory` does not treat an arbitrary HTML page as a general web page. It extracts links using an anchor pattern that starts with `<a href="...">`. Therefore the bootstrap link must follow these rules:
+
+- `href` must be the first attribute after `<a` (a CSS class may follow it, not precede it).
+- The visible anchor text must exactly match the relative filename in `href`.
+- The ZIP itself must be published in the GitHub Pages root beside `index.html`.
+- Keep the link relative, for example `<a href="repository.introskip-1.0.5.zip">repository.introskip-1.0.5.zip</a>`.
+
+The workflow runs a regression check using Kodi's `CHTTPDirectory` anchor pattern against both the generated page and the deployed public page, and downloads/tests the ZIP. This catches attribute-order or filename mismatches before release. See [Kodi's HTTPDirectory implementation](https://github.com/xbmc/xbmc/blob/Piers/xbmc/filesystem/HTTPDirectory.cpp) and the [repository.example template](https://github.com/drinfernoo/repository.example).
 
 ## Reference
 
