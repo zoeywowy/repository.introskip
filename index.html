@@ -15,16 +15,17 @@
 <body>
   <h1>IntroSkip for Kodi 22</h1>
   <p>Install the IntroSkip repository add-on once. Kodi can then install and update IntroSkip through its normal add-on manager.</p>
-  <p><a class="download" href="https://raw.githubusercontent.com/zoeywowy/repository.introskip/main/repository.introskip-1.0.5.zip">Download repository.introskip-1.0.5.zip (direct ZIP)</a></p>
-  <h2>Install it in Kodi</h2>
+  <p><a class="download" href="repository.introskip-1.0.5.zip">repository.introskip-1.0.5.zip</a></p>
+  <h2>Install it in Kodi 22</h2>
   <ol>
-    <li>Download the ZIP above in a normal web browser. Do not extract it.</li>
-    <li>Make the ZIP available to Kodi: use Downloads on Windows, or USB/shared storage on Android TV and Fire TV.</li>
-    <li>In Kodi, open <strong>Add-ons → Install from zip file</strong>.</li>
-    <li>Browse to the downloaded ZIP and select it.</li>
-    <li>Open <strong>Install from repository → IntroSkip Repository → Services → IntroSkip</strong>.</li>
+    <li>Open <strong>Settings → File manager → Add source</strong>.</li>
+    <li>Enter <code>https://zoeywowy.github.io/repository.introskip/</code> and name it <strong>IntroSkip Repository</strong>.</li>
+    <li>Open <strong>Add-ons → Install from zip file</strong>.</li>
+    <li>Select the <strong>IntroSkip Repository</strong> source. Kodi should list <code>repository.introskip-1.0.5.zip</code>.</li>
+    <li>Select the ZIP. Kodi installs the repository add-on.</li>
+    <li>Open <strong>Install from repository → IntroSkip Repository → Services → IntroSkip</strong> and install it.</li>
   </ol>
-  <p><strong>Important:</strong> Do not add this webpage as a Kodi File Manager source. If Kodi's ZIP browser shows only <code>..</code> and <code>0 items</code>, cancel and download the ZIP in a normal browser first.</p>
+  <p><strong>Why this works:</strong> the ZIP link is relative to this website, matching the A4K repository layout. Kodi can browse the source and see the ZIP as a file. Do not use a separate raw.githubusercontent.com link in the source page.</p>
   <p><a href="https://github.com/zoeywowy/service.introskip">IntroSkip add-on</a> · <a href="https://github.com/zoeywowy/repository.introskip">Repository source</a></p>
 </body>
 </html>
