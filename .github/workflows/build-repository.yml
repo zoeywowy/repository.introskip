@@ -103,6 +103,8 @@ jobs:
           from pathlib import Path
           from zipfile import ZipFile
           import hashlib
+          import html
+          import re
           import shutil
           import xml.etree.ElementTree as ET
 
@@ -184,7 +186,7 @@ jobs:
           <body>
             <h1>IntroSkip for Kodi 22</h1>
             <p>Install the IntroSkip repository add-on once. Kodi can then install and update IntroSkip through its normal add-on manager.</p>
-            <p><a class="download" href="{bootstrap.name}">{bootstrap.name}</a></p>
+            <p><a href="{bootstrap.name}" class="download">{bootstrap.name}</a></p>
             <h2>Install it in Kodi 22</h2>
             <ol>
               <li>Open <strong>Settings → File manager → Add source</strong>.</li>
@@ -200,6 +202,24 @@ jobs:
           </html>
           """
           Path("index.html").write_text(page, encoding="utf-8")
+
+          # Mirror Kodi 22 CHTTPDirectory's HTML anchor recognition.
+          kodi_anchor = re.compile(
+              r'<a href="([^"]*)"[^>]*>\\s*(.*?)\\s*</a>(.+?)(?=<a|</tr|$)',
+              re.IGNORECASE | re.DOTALL,
+          )
+          visible_items = []
+          for match in kodi_anchor.finditer(page):
+              href = html.unescape(match.group(1)).strip().rstrip("/")
+              label = html.unescape(re.sub(r"<[^>]+>", "", match.group(2))).strip().rstrip("/")
+              if href and label == href:
+                  visible_items.append(href)
+          if bootstrap.name not in visible_items:
+              raise SystemExit(
+                  f"Kodi 22 HTTPDirectory would not list {bootstrap.name}; "
+                  f"recognized entries: {visible_items}"
+              )
+          print(f"Kodi 22 HTTPDirectory test passed: {bootstrap.name} is visible.")
           print(f"Validated Kodi packages and prepared {bootstrap.name}")
           PY
 
