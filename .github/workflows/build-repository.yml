@@ -210,6 +210,7 @@ jobs:
           git add -A -- repo/zips index.html 'repository.introskip-*.zip'
           if ! git diff --cached --quiet; then
             git commit -m "build: publish IntroSkip Kodi packages"
+            git pull --rebase origin main
             git push origin HEAD:main
           else
             echo "No package changes to publish."
