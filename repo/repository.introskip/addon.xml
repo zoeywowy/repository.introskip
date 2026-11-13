@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="repository.introskip" name="IntroSkip Repository" version="1.0.5" provider-name="zoeywowy">
+<addon id="repository.introskip" name="IntroSkip Repository" version="1.0.6" provider-name="zoeywowy">
     <extension point="xbmc.addon.repository" name="IntroSkip Repository">
         <dir>
             <info compressed="false">https://raw.githubusercontent.com/zoeywowy/repository.introskip/main/repo/zips/addons.xml</info>
