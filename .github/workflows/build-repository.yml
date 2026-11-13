@@ -1,5 +1,7 @@
 name: Build Kodi repository
 
+# Rebuilds the installable service package from service.introskip main after each release.
+
 on:
   workflow_dispatch:
   schedule:
