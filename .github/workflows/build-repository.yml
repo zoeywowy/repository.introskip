@@ -1,6 +1,6 @@
 name: Build Kodi repository
 
-# Rebuilds the installable service package from service.introskip main after each release (currently 0.0.28).
+# Rebuilds installable service packages from service.introskip main; 0.0.30 contains shutdown lifecycle fixes.
 
 on:
   workflow_dispatch:
