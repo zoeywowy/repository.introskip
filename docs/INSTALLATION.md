@@ -12,7 +12,7 @@ The intended installation uses Kodi's File Manager source. You do not need to do
 6. Select that ZIP and wait for Kodi to confirm that **IntroSkip Repository** is installed.
 7. Open **Add-ons → Install from repository → IntroSkip Repository → Services → IntroSkip** and select **Install**.
 
-The bootstrap ZIP is linked with a relative filename from the GitHub Pages root. This mirrors the working A4K repository pattern: the Kodi File Manager source points to the website root, and Kodi enumerates the ZIP link on that page.
+The bootstrap ZIP is linked with a relative filename from the GitHub Pages root. Kodi 22's HTTP directory parser expects the anchor to start with `<a href="...">` and the visible link text to match that filename exactly. Putting a class before `href` makes Kodi miss the link even though the page looks correct in a browser. IntroSkip's build now tests the generated and deployed HTML against that parser pattern. This follows the [repository.example template](https://github.com/drinfernoo/repository.example) and Kodi's [HTTPDirectory implementation](https://github.com/xbmc/xbmc/blob/Piers/xbmc/filesystem/HTTPDirectory.cpp).
 
 ## Updating
 
@@ -20,7 +20,7 @@ After the repository add-on is installed, Kodi reads the feed's `addons.xml` and
 
 ## If Kodi shows an empty source
 
-If selecting **IntroSkip Repository** under **Install from zip file** shows only `..` and **0 items`, do not download a ZIP manually yet. That means Kodi is not seeing the relative ZIP link from the published page.
+If selecting **IntroSkip Repository** under **Install from zip file** shows only `..` and **0 items**, Kodi is not recognizing the ZIP link in the HTML returned by the source.
 
 - Confirm the GitHub Actions **Build Kodi repository** workflow succeeded: [Actions](https://github.com/zoeywowy/repository.introskip/actions).
 - Confirm the Pages site has deployed the latest commit: [Deployments](https://github.com/zoeywowy/repository.introskip/deployments).
