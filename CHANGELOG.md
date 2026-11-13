@@ -1,5 +1,7 @@
 # Repository release notes
 
+**Current packaged IntroSkip service:** 0.0.30.
+
 ## 1.0.5 — Kodi 22 File Manager installation
 
 **12 November 2026**
