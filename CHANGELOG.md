@@ -1,6 +1,15 @@
 # Repository release notes
 
-**Current packaged IntroSkip service:** 0.0.30.
+**Current packaged IntroSkip service:** 0.0.31.
+
+## 1.0.6 — Kodi repository feed and service lifecycle update
+
+**13 November 2026**
+
+- Provides the standard Kodi repository installer and regenerated index for service 0.0.31.
+- Service 0.0.31 adds native preview chapter detection and safer background worker shutdown.
+- Actual on-device in-place updating and uninstalling must still be verified; this is a pre-release.
+
 
 ## 1.0.5 — Kodi 22 File Manager installation
 
