@@ -1,6 +1,6 @@
 name: Build Kodi repository
 
-# Rebuilds installable service packages from service.introskip main; 0.0.30 contains shutdown lifecycle fixes.
+# Rebuilds installable service packages from the current service.introskip main branch.
 
 on:
   workflow_dispatch:
@@ -35,7 +35,7 @@ jobs:
         with:
           persist-credentials: true
 
-      # Rebuilds the feed from the current service source, including release 0.0.25.
+      # Rebuilds the feed from the current service source; do not hardcode an old version.
       - name: Check out IntroSkip add-on source
         uses: actions/checkout@v4
         with:
