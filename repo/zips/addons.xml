@@ -18,7 +18,7 @@
             <icon>icon.png</icon>
         </assets>
     </extension>
-</addon><addon id="service.introskip" name="IntroSkip" version="0.0.31" provider-name="zoeywowy">
+</addon><addon id="service.introskip" name="IntroSkip" version="0.0.32" provider-name="zoeywowy">
     <requires>
         <import addon="xbmc.python" version="3.1.0" />
     </requires>
