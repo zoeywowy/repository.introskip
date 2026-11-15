@@ -31,9 +31,8 @@ concurrency:
 jobs:
   build-and-publish:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+    outputs:
+      package_changed: ${{ steps.package_changes.outputs.changed }}
 
     steps:
       - name: Check out repository
@@ -272,10 +271,6 @@ jobs:
             echo "changed=false" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Configure GitHub Pages
-        if: github.event_name == 'push' && steps.package_changes.outputs.changed != 'true'
-        uses: actions/configure-pages@v5
-
       - name: Prepare Pages site
         if: github.event_name == 'push' && steps.package_changes.outputs.changed != 'true'
         run: |
@@ -290,13 +285,25 @@ jobs:
         with:
           path: site
 
+  deploy-pages:
+    if: github.event_name == 'push' && needs.build-and-publish.outputs.package_changed != 'true'
+    needs: build-and-publish
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
       - name: Deploy GitHub Pages
-        if: github.event_name == 'push' && steps.package_changes.outputs.changed != 'true'
         id: deployment
         uses: actions/deploy-pages@v4
 
       - name: Verify public Kodi repository files
-        if: github.event_name == 'push' && steps.package_changes.outputs.changed != 'true'
         run: |
           curl -fLsS --retry 8 --retry-all-errors --retry-delay 3 \
             "https://raw.githubusercontent.com/zoeywowy/repository.introskip/main/repo/zips/addons.xml" \
