@@ -207,32 +207,37 @@ class Generator:
 
         final_zip = os.path.join(zip_folder, "{0}-{1}.zip".format(addon_id, version))
         if not os.path.exists(final_zip):
-            zip = zipfile.ZipFile(final_zip, "w", compression=zipfile.ZIP_DEFLATED)
             root_len = len(os.path.dirname(os.path.abspath(addon_folder)))
 
-            for root, dirs, files in os.walk(addon_folder):
-                # remove any unneeded artifacts
-                for i in IGNORE:
-                    if i in dirs:
-                        try:
-                            dirs.remove(i)
-                        except:
-                            pass
-                    for f in files:
-                        if f.startswith(i):
-                            try:
-                                files.remove(f)
-                            except:
-                                pass
+            with zipfile.ZipFile(
+                final_zip, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=9
+            ) as archive:
+                for root, dirs, files in os.walk(addon_folder):
+                    # remove any unneeded artifacts
+                    dirs[:] = sorted(directory for directory in dirs if directory not in IGNORE)
+                    files = sorted(
+                        filename
+                        for filename in files
+                        if not any(filename.startswith(item) for item in IGNORE)
+                    )
 
-                archive_root = os.path.abspath(root)[root_len:]
+                    archive_root = os.path.abspath(root)[root_len:].lstrip(os.sep)
 
-                for f in files:
-                    fullpath = os.path.join(root, f)
-                    archive_name = os.path.join(archive_root, f)
-                    zip.write(fullpath, archive_name, zipfile.ZIP_DEFLATED)
+                    for filename in files:
+                        fullpath = os.path.join(root, filename)
+                        archive_name = os.path.join(archive_root, filename).replace(os.sep, "/")
+                        info = zipfile.ZipInfo(archive_name, date_time=(1980, 1, 1, 0, 0, 0))
+                        info.compress_type = zipfile.ZIP_DEFLATED
+                        info.create_system = 3
+                        info.external_attr = 0o100644 << 16
+                        with open(fullpath, "rb") as member:
+                            archive.writestr(
+                                info,
+                                member.read(),
+                                compress_type=zipfile.ZIP_DEFLATED,
+                                compresslevel=9,
+                            )
 
-            zip.close()
             size = convert_bytes(os.path.getsize(final_zip))
             print(
                 "Zip created for {} ({}) - {}".format(
