@@ -12,9 +12,15 @@ on:
       - ".github/workflows/build-repository.yml"
       - "_repo_generator.py"
       - "repo/repository.introskip/addon.xml"
+      - "repo/zips/**"
+      - "index.html"
+      - "repository.introskip-*.zip"
+  pull_request:
+    branches: [main]
 
 permissions:
   contents: write
+  pull-requests: write
   pages: write
   id-token: write
 
@@ -241,23 +247,37 @@ jobs:
           print(f"Validated Kodi packages and prepared {bootstrap.name}")
           PY
 
-      - name: Commit generated Kodi packages
+      - name: Propose generated Kodi packages
+        if: github.event_name != 'pull_request'
+        id: package_changes
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A -- repo/zips index.html 'repository.introskip-*.zip'
           if ! git diff --cached --quiet; then
-            git commit -m "build: publish IntroSkip Kodi packages"
-            git pull --rebase origin main
-            git push origin HEAD:main
+            branch="automation/repository-packages-${GITHUB_RUN_ID}"
+            git checkout -b "$branch"
+            git commit -m "build: refresh IntroSkip Kodi packages"
+            git push origin "HEAD:$branch"
+            gh pr create \
+              --base main \
+              --head "$branch" \
+              --title "build: refresh IntroSkip Kodi packages" \
+              --body "Package and feed updates generated from service.introskip main. Review and merge this PR to publish through GitHub Pages."
+            echo "changed=true" >> "$GITHUB_OUTPUT"
           else
-            echo "No package changes to publish."
+            echo "No package changes to propose."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Configure GitHub Pages
+        if: github.event_name == 'push' && steps.package_changes.outputs.changed != 'true'
         uses: actions/configure-pages@v5
 
       - name: Prepare Pages site
+        if: github.event_name == 'push' && steps.package_changes.outputs.changed != 'true'
         run: |
           mkdir -p site
           cp index.html site/index.html
@@ -265,15 +285,18 @@ jobs:
           touch site/.nojekyll
 
       - name: Upload Pages artifact
+        if: github.event_name == 'push' && steps.package_changes.outputs.changed != 'true'
         uses: actions/upload-pages-artifact@v4
         with:
           path: site
 
       - name: Deploy GitHub Pages
+        if: github.event_name == 'push' && steps.package_changes.outputs.changed != 'true'
         id: deployment
         uses: actions/deploy-pages@v4
 
       - name: Verify public Kodi repository files
+        if: github.event_name == 'push' && steps.package_changes.outputs.changed != 'true'
         run: |
           curl -fLsS --retry 8 --retry-all-errors --retry-delay 3 \
             "https://raw.githubusercontent.com/zoeywowy/repository.introskip/main/repo/zips/addons.xml" \
